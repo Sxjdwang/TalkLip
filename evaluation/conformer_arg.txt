@@ -1,0 +1,12 @@
+adim=256
+aheads=4
+eunits=2048
+elayers=12
+dlayers=6
+mtlalpha=0.3
+report_cer=True
+report_wer=True
+lsm_weight=0.1
+transformer_length_normalized_loss=0
+ctc_type='builtin'
+dropout_rate=0.1

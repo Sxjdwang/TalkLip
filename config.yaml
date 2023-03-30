@@ -1,0 +1,343 @@
+_name: av_hubert_seq2seq
+w2v_path: /checkpoint/bshi/data/lrs3/model-ckpt/vox/noise-pretrain/base_vox_iter5.pt
+no_pretrained_weights: false
+dropout_input: 0.0
+final_dropout: 0.0
+dropout: 0.0
+attention_dropout: 0.0
+activation_dropout: 0.1
+apply_mask: false
+mask_length: 10
+mask_prob: 0.75
+mask_selection: static
+mask_other: 0.0
+no_mask_overlap: false
+mask_channel_length: 64
+mask_channel_prob: 0.5
+mask_channel_selection: static
+mask_channel_other: 0.0
+no_mask_channel_overlap: false
+freeze_finetune_updates: 48000
+feature_grad_mult: 1.0
+layerdrop: 0.1
+normalize: true
+data: /checkpoint/bshi/data/lrs3//video/wav/all_tsv/
+w2v_args:
+  _name: null
+  common:
+    _name: null
+    no_progress_bar: false
+    log_interval: 200
+    log_format: json
+    log_file: null
+    tensorboard_logdir: null
+    wandb_project: null
+    azureml_logging: false
+    seed: 1337
+    cpu: false
+    tpu: false
+    bf16: false
+    memory_efficient_bf16: false
+    fp16: true
+    memory_efficient_fp16: false
+    fp16_no_flatten_grads: false
+    fp16_init_scale: 128
+    fp16_scale_window: null
+    fp16_scale_tolerance: 0.0
+    on_cpu_convert_precision: false
+    min_loss_scale: 0.0001
+    threshold_loss_scale: null
+    amp: false
+    amp_batch_retries: 2
+    amp_init_scale: 128
+    amp_scale_window: null
+    user_dir: /private/home/bshi/code/fairseq-py/examples/av_hubert/model
+    empty_cache_freq: 10000
+    all_gather_list_size: 16384
+    model_parallel_size: 1
+    quantization_config_path: null
+    profile: false
+    reset_logging: false
+    suppress_crashes: false
+    use_plasma_view: false
+    plasma_path: /tmp/plasma
+  common_eval:
+    _name: null
+    path: null
+    post_process: null
+    quiet: false
+    model_overrides: '{}'
+    results_path: null
+  distributed_training:
+    _name: null
+    distributed_world_size: 32
+    distributed_num_procs: 8
+    distributed_rank: 0
+    distributed_backend: nccl
+    distributed_init_method: tcp://learnfair5067:29671
+    distributed_port: 29671
+    device_id: 0
+    distributed_no_spawn: false
+    ddp_backend: no_c10d
+    ddp_comm_hook: none
+    bucket_cap_mb: 25
+    fix_batches_to_gpus: false
+    find_unused_parameters: false
+    fast_stat_sync: false
+    heartbeat_timeout: -1
+    broadcast_buffers: false
+    slowmo_momentum: null
+    slowmo_algorithm: LocalSGD
+    localsgd_frequency: 3
+    nprocs_per_node: 8
+    pipeline_model_parallel: false
+    pipeline_balance: null
+    pipeline_devices: null
+    pipeline_chunks: 0
+    pipeline_encoder_balance: null
+    pipeline_encoder_devices: null
+    pipeline_decoder_balance: null
+    pipeline_decoder_devices: null
+    pipeline_checkpoint: never
+    zero_sharding: none
+    fp16: true
+    memory_efficient_fp16: false
+    tpu: false
+    no_reshard_after_forward: false
+    fp32_reduce_scatter: false
+    cpu_offload: false
+    use_sharded_state: false
+  dataset:
+    _name: null
+    num_workers: 6
+    skip_invalid_size_inputs_valid_test: true
+    max_tokens: 1000
+    batch_size: null
+    required_batch_size_multiple: 8
+    required_seq_len_multiple: 1
+    dataset_impl: null
+    data_buffer_size: 10
+    train_subset: train
+    valid_subset: valid
+    combine_valid_subsets: null
+    ignore_unused_valid_subsets: false
+    validate_interval: 5
+    validate_interval_updates: 10000
+    validate_after_updates: 0
+    fixed_validation_seed: null
+    disable_validation: false
+    max_tokens_valid: 1000
+    batch_size_valid: null
+    max_valid_steps: null
+    curriculum: 0
+    gen_subset: test
+    num_shards: 1
+    shard_id: 0
+  optimization:
+    _name: null
+    max_epoch: 0
+    max_update: 800000
+    stop_time_hours: 0.0
+    clip_norm: 10.0
+    sentence_avg: false
+    update_freq:
+    - 1
+    lr:
+    - 0.002
+    stop_min_lr: -1.0
+    use_bmuf: false
+  checkpoint:
+    _name: null
+    save_dir: checkpoints
+    restore_file: checkpoint_last.pt
+    finetune_from_model: null
+    reset_dataloader: false
+    reset_lr_scheduler: false
+    reset_meters: false
+    reset_optimizer: false
+    optimizer_overrides: '{}'
+    save_interval: 1
+    save_interval_updates: 25000
+    keep_interval_updates: 1
+    keep_interval_updates_pattern: -1
+    keep_last_epochs: -1
+    keep_best_checkpoints: -1
+    no_save: false
+    no_epoch_checkpoints: true
+    no_last_checkpoints: false
+    no_save_optimizer_state: false
+    best_checkpoint_metric: loss
+    maximize_best_checkpoint_metric: false
+    patience: -1
+    checkpoint_suffix: ''
+    checkpoint_shard_count: 1
+    load_checkpoint_on_all_dp_ranks: false
+    write_checkpoints_asynchronously: false
+    model_parallel_size: 1
+  bmuf:
+    _name: null
+    block_lr: 1.0
+    block_momentum: 0.875
+    global_sync_iter: 50
+    warmup_iterations: 500
+    use_nbm: false
+    average_sync: false
+    distributed_world_size: 32
+  generation:
+    _name: null
+    beam: 5
+    nbest: 1
+    max_len_a: 0.0
+    max_len_b: 200
+    min_len: 1
+    match_source_len: false
+    unnormalized: false
+    no_early_stop: false
+    no_beamable_mm: false
+    lenpen: 1.0
+    unkpen: 0.0
+    replace_unk: null
+    sacrebleu: false
+    score_reference: false
+    prefix_size: 0
+    no_repeat_ngram_size: 0
+    sampling: false
+    sampling_topk: -1
+    sampling_topp: -1.0
+    constraints: null
+    temperature: 1.0
+    diverse_beam_groups: -1
+    diverse_beam_strength: 0.5
+    diversity_rate: -1.0
+    print_alignment: null
+    print_step: false
+    lm_path: null
+    lm_weight: 0.0
+    iter_decode_eos_penalty: 0.0
+    iter_decode_max_iter: 10
+    iter_decode_force_max_iter: false
+    iter_decode_with_beam: 1
+    iter_decode_with_external_reranker: false
+    retain_iter_history: false
+    retain_dropout: false
+    retain_dropout_modules: null
+    decoding_format: null
+    no_seed_provided: false
+  eval_lm:
+    _name: null
+    output_word_probs: false
+    output_word_stats: false
+    context_window: 0
+    softmax_batch: 9223372036854775807
+  interactive:
+    _name: null
+    buffer_size: 0
+    input: '-'
+  model:
+    _name: av_hubert
+    label_rate: 25
+    skip_masked: false
+    skip_nomask: false
+    mask_prob_image: 0.3
+    mask_length_image: 5
+    mask_prob_audio: 0.8
+    mask_length_audio: 10
+    extractor_mode: default
+    conv_feature_layers: '[(512,10,5)] + [(512,3,2)] * 4 + [(512,2,2)] * 2'
+    final_dim: 256
+    encoder_layerdrop: 0.05
+    dropout_input: 0.1
+    dropout_features: 0.1
+    dropout: 0.1
+    attention_dropout: 0.1
+    feature_grad_mult: 0.1
+    untie_final_proj: true
+    activation_dropout: 0.0
+    layer_norm_first: true
+    audio_feat_dim: 104
+    modality_dropout: 0.5
+    audio_dropout: 0.5
+    modality_fuse: concat
+    selection_type: same_seq
+    masking_type: input
+  task:
+    _name: av_hubert_pretraining
+    data: /checkpoint/bshi/data/lrs3//video/wav/envox_tsv/
+    label_dir: /checkpoint/bshi/data/lrs3//video/hubert/stitch-iters/envox-iter4-l12c2000/
+    labels:
+    - km
+    label_rate: 25
+    sample_rate: 25
+    max_sample_size: 2000
+    min_sample_size: 5
+    pad_audio: false
+    random_crop: true
+    normalize: true
+    input_modality: image
+    image_aug: true
+    stack_order_audio: 4
+    max_trim_sample_size: 400
+    noise_prob: 0.25
+    noise_snr: 0
+    noise_wav: /checkpoint/bshi/data/lrs3//audio/noise/tsv/musan-lgall/
+  criterion:
+    _name: av_hubert
+    pred_masked_weight: 1.0
+    pred_nomask_weight: 1.0
+    loss_weights:
+    - 10
+  optimizer:
+    _name: adam
+    adam_betas: (0.9,0.98)
+    adam_eps: 1.0e-06
+    weight_decay: 0.01
+    use_old_adam: false
+    tpu: false
+    lr:
+    - 0.002
+  lr_scheduler:
+    _name: polynomial_decay
+    warmup_updates: 64000
+    force_anneal: null
+    end_learning_rate: 0.0
+    power: 1.0
+    total_num_update: 800000
+    lr:
+    - 0.002
+  scoring: null
+  bpe: null
+  tokenizer: null
+  job_logging_cfg:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+      file:
+        class: logging.FileHandler
+        formatter: simple
+        filename: hydra_train.log
+    root:
+      level: INFO
+      handlers:
+      - console
+      - file
+    disable_existing_loggers: false
+decoder_embed_dim: 768
+decoder_ffn_embed_dim: 3072
+decoder_layers: 6
+decoder_layerdrop: 0.0
+decoder_attention_heads: 4
+decoder_learned_pos: false
+decoder_normalize_before: true
+no_token_positional_embeddings: false
+decoder_dropout: 0.1
+decoder_attention_dropout: 0.0
+decoder_activation_dropout: 0.1
+max_target_positions: 2048
+share_decoder_input_output_embed: true
+no_scale_embedding: true

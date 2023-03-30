@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--filelist', help="Path of a file list containing all samples' name", required=True, type=str)
     parser.add_argument("--video_root", help="Root folder of video", required=True, type=str)
-    parser.add_argument('--save_root', help="Root folder of saving audio", required=True, type=str)
+    parser.add_argument('--audio_root', help="Root folder of saving audio", required=True, type=str)
     parser.add_argument("--rank", help="the rank of the current thread in the preprocessing ", default=1, type=str)
     parser.add_argument("--nshard", help="How many threads are used in the preprocessing ", default=1, type=str)
 

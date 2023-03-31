@@ -4,7 +4,7 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 
 [Paper](http://arxiv.org/abs/2303.17480)
 
-##Prerequisite 
+## Prerequisite 
 
 1. `pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html`
 2. Install [AV-Hubert](https://github.com/facebookresearch/av_hubert)
@@ -13,7 +13,8 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 6. Download the pre-trained checkpoint of face detector [pre-trained model](https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth) and put it to `face_detection/detection/sfd/s3fd.pth`. Alternative [link](https://iiitaphyd-my.sharepoint.com/:u:/g/personal/prajwal_k_research_iiit_ac_in/EZsy6qWuivtDnANIG73iHjIBjMSoojcIV0NULXV-yiuiIg?e=qTasa8).
 
 
-##Dataset and pre-processing
+## Dataset and pre-processing
+
 1. Download [LRS2](https://www.robots.ox.ac.uk/~vgg/data/lip_reading/lrs2.html) for training and evaluation. Note that we do not use the pretrain set.
 2. Download [LRW](https://www.robots.ox.ac.uk/~vgg/data/lip_reading/lrw1.html) for evaluation.
 3. To extract wavforms from mp4 files:
@@ -31,10 +32,10 @@ python preparation/bbx_extract.py --filelist #path1  --video_root $path2 --bbx_r
 ```
 - $path4: a root directory for saving detected bounding boxes
 
-##Train 
+## Train 
 We are aranging codes and will release them before June
 
-##Test 
+## Test 
 The below command is to synthesize videos for quantitative evaluation in our paper.
 ```
 python inf_test.py --filelist $path1 --video_root $path2 --audio_root $path3 \
@@ -44,7 +45,7 @@ python inf_test.py --filelist $path1 --video_root $path2 --audio_root $path3 \
 - $path6: a pre-trained checkpoint of TalkLip net
 - $avhubert_root: path of root of avhubert (should like xxx/av_hubert/avhubert)
 
-##Demo
+## Demo
 If you want to reenact the lip movement of a video with a different speech, you can use the following command. 
 ```
 python inf_demo.py --video_path $path8 --wav_path $path9 --ckpt_path $path6 --avhubert_root $avhubert_root
@@ -52,7 +53,7 @@ python inf_demo.py --video_path $path8 --wav_path $path9 --ckpt_path $path6 --av
 - $path8: a video file (end with .mp4)
 - $path9: a audio file (end with .wav)
 
-##Evaluation
+## Evaluation
 
 Please follow README.md in the evaluation directory
 

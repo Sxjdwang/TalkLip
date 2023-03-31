@@ -65,7 +65,7 @@ def build_encoder(hubert_root, path='config.yaml'):
     w2v_args.task.data = cfg.data
     task_pretrain = tasks.setup_task(w2v_args.task)
 
-    task_pretrain.load_state_dict(torch.load('/home/wjd/Talklip/task_state.pt'))
+    task_pretrain.load_state_dict(torch.load('task_state.pt'))
 
     encoder_ = task_pretrain.build_model(w2v_args.model)
     encoder = HubertEncoderWrapper(encoder_)
@@ -326,7 +326,7 @@ if __name__ == "__main__":
     parser.add_argument('--avhubert_root', help='Path of av_hubert root', required=True, type=str)
     parser.add_argument('--check', help='whether filter out videos which have been synthesized in save_root', default=False, type=bool)
     parser.add_argument('--ffmpeg', default='ffmpeg', type=str)
-    parser.add_argument('--device', default=3, type=int)
+    parser.add_argument('--device', default=0, type=int)
 
     args = parser.parse_args()
 

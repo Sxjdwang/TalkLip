@@ -64,7 +64,7 @@ def build_encoder(hubert_root, path='config.yaml'):
     w2v_args.task.data = cfg.data
     task_pretrain = tasks.setup_task(w2v_args.task)
 
-    task_pretrain.load_state_dict(torch.load('/home/wjd/Talklip/task_state.pt'))
+    task_pretrain.load_state_dict(torch.load('task_state.pt'))
 
     encoder_ = task_pretrain.build_model(w2v_args.model)
     encoder = HubertEncoderWrapper(encoder_)

@@ -5,6 +5,8 @@ import argparse, os, cv2
 from tqdm import tqdm
 import math
 
+import sys
+sys.path.append(os.getcwd().replace('preparation', ''))
 import face_detection
 
 def process_video_file(samplename, args, fa):
@@ -20,7 +22,7 @@ def process_video_file(samplename, args, fa):
         frames.append(frame)
     height, width, _ = frames[0].shape
 
-    fulldir = path.join(args.preprocessed_root, samplename)
+    fulldir = path.join(args.bbx_root, samplename)
     os.makedirs(os.path.dirname(fulldir), exist_ok=True)
     if not os.path.exists(os.path.dirname(fulldir)):
         os.makedirs(os.path.dirname(fulldir))
@@ -47,7 +49,7 @@ def process_video_file(samplename, args, fa):
 
 
 def main(args, fa):
-    print('Started processing for {} with {} GPUs'.format(args.data_root, args.ngpu))
+    print('Started processing for {} with {} GPUs'.format(args.video_root, args.rank))
 
     with open(args.filelist) as f:
         lines = f.readlines()

@@ -15,10 +15,10 @@ def main(args):
     print('process {}-{}'.format(start_id, end_id))
 
     for line in tqdm(lines[start_id: end_id]):
-        path = line.strip()
+        path = line.strip().split()[0]
 
         video_path = '{}/{}.mp4'.format(args.video_root, path)
-        wav_path = '{}/{}.wav'.format(args.save_root, path)
+        wav_path = '{}/{}.wav'.format(args.audio_root, path)
 
         if not os.path.exists(os.path.dirname(wav_path)):
             os.makedirs(os.path.dirname(wav_path))

@@ -1,8 +1,8 @@
 """
-This file is adapted from 'wav2lip' GitHub repository
+This metric and code are adapted from 'wav2lip' GitHub repository
 https://github.com/Rudrabha/Wav2Lip.
+You may follow the above link for more information.
 
-We design a new audio encoder with transformer
 """
 
 #!/usr/bin/python

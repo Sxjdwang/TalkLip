@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
 import os, sys
-sys.path.append(os.getcwd())
+sys.path.append(os.getcwd().replace('/evaluation', ''))
 from models.conformer_lip_reading import E2E
 
 char_dict = {" ":1, "'":22, "1":30, "0":29, "3":37, "2":32, "5":34, "4":38, "7":36, "6":35, "9":31, "8":33,
@@ -140,7 +140,7 @@ def main(args):
 
     #declaring the model, optimizer, scheduler and the loss function
 
-    model = E2E(512, 40, 'evaluation/conformer_arg.txt', char_dict[" "])
+    model = E2E(512, 40, 'conformer_arg.txt', char_dict[" "])
 
     model.load_state_dict(torch.load(args.ckpt_path, map_location=device))
     model.to(device)
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     parser.add_argument('--video_mean', help='normalization mean', default=0.4161, type=float)
 
     parser.add_argument('--seed', default=19220297, type=int)
-    parser.add_argument('--device', default=3, type=int)
+    parser.add_argument('--device', default=0, type=int)
     parser.add_argument('--num_workers', default=0, type=int)
 
     args = parser.parse_args()

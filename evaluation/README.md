@@ -18,18 +18,18 @@ git clone https://github.com/joonson/syncnet_python.git
 2. download pre-trained model
 
 ```
-cd syncnet_python
+cd $syncnet_python_root
 sh download_model.sh
 ```
 
 3. copy a python file to the root of syncnet_python 
 ```
-cp SyncNetInstance_calc_scores.py syncnet_python
+cp SyncNetInstance_calc_scores.py $syncnet_python_root
 ```
 
 4. evaluate synthesized videos
 ```
-python sync_eval.py --data_root $path5 --filelist $path1 --sync_root $path5
+python sync_eval.py --data_root $path5 --filelist $path1 --sync_root $syncnet_python_root
 ```
 - path5 is the path of the syncnet_python 
 

@@ -22,7 +22,7 @@ def eval_sync(args):
     with open(args.filelist) as f:
         lines = f.readlines()
 
-    all_videos = ['{}/{}.mp4'.format(args.data_root, line.strip().split()[0]) for line in lines[:12500]]
+    all_videos = ['{}/{}.mp4'.format(args.data_root, line.strip().split()[0]) for line in lines]
 
     print('path of one video to be evaluated is {}'.format(all_videos[-1]))
 

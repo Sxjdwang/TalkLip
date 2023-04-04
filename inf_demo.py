@@ -77,189 +77,6 @@ def build_encoder(hubert_root, path='config.yaml'):
     return encoder, encoder.w2v_model.encoder_embed_dim
 
 
-def parse_filelist(file_list, save_root, check):
-
-    with open(file_list) as f:
-        lines = f.readlines()
-
-    if check:
-        sample_paths = []
-        for line in lines:
-            line = line.strip().split()[0]
-            if not os.path.exists('{}/{}.mp4'.format(save_root, line)):
-                sample_paths.append(line)
-    else:
-        sample_paths = [line.strip().split()[0] for line in lines]
-
-    return sample_paths
-
-
-class Talklipdata(object):
-
-    def __init__(self, args):
-        self.data_root = args.video_root
-        self.bbx_root = args.bbx_root
-        self.audio_root = args.audio_root
-        self.samples = parse_filelist(args.filelist, args.save_root, args.check)
-        self.stack_order_audio = 4
-        self.crop_size = 96
-
-    def prepare_window(self, window):
-        # T x 3 x H x W
-        x = window / 255.
-        x = x.permute((0, 3, 1, 2))
-
-        return x
-
-    def croppatch(self, images, bbxs):
-        patch = np.zeros((images.shape[0], self.crop_size, self.crop_size, 3))
-        width = images.shape[1]
-        for i, bbx in enumerate(bbxs):
-            bbx[2] = min(bbx[2], width)
-            bbx[3] = min(bbx[3], width)
-            patch[i] = cv2.resize(images[i, bbx[1]:bbx[3], bbx[0]:bbx[2], :], (self.crop_size, self.crop_size))
-        return patch
-
-    def audio_visual_align(self, audio_feats, video_feats):
-        diff = len(audio_feats) - len(video_feats)
-        if diff < 0:
-            audio_feats = np.concatenate(
-                [audio_feats, np.zeros([-diff, audio_feats.shape[-1]], dtype=audio_feats.dtype)])
-        elif diff > 0:
-            left = diff // 2
-            right = diff - left
-            audio_feats = audio_feats[left:-right]
-            # audio_feats = audio_feats[:-diff]
-        return audio_feats
-
-    def fre_audio(self, wav_data, sample_rate):
-        def stacker(feats, stack_order):
-            """
-            Concatenating consecutive audio frames, 4 frames of tf forms a new frame of tf
-            Args:
-            feats - numpy.ndarray of shape [T, F]
-            stack_order - int (number of neighboring frames to concatenate
-            Returns:
-            feats - numpy.ndarray of shape [T', F']
-            """
-            feat_dim = feats.shape[1]
-            if len(feats) % stack_order != 0:
-                res = stack_order - len(feats) % stack_order
-                res = np.zeros([res, feat_dim]).astype(feats.dtype)
-                feats = np.concatenate([feats, res], axis=0)
-            feats = feats.reshape((-1, stack_order, feat_dim)).reshape(-1, stack_order*feat_dim)
-            return feats
-
-        audio_feats = logfbank(wav_data, samplerate=sample_rate).astype(np.float32)  # [T, F]
-        audio_feats = stacker(audio_feats, self.stack_order_audio)  # [T/stack_order_audio, F*stack_order_audio]
-        return audio_feats
-
-    def load_video(self, path):
-        cap = cv2.VideoCapture(path)
-        imgs = []
-        while True:
-            ret, frame = cap.read()
-            if ret:
-                imgs.append(frame)
-            else:
-                break
-        cap.release()
-        return imgs
-
-    def __len__(self):
-        return len(self.samples)
-
-    def __getitem__(self, idx):
-        """
-
-        Args:
-            idx:
-
-        Returns:
-            x (N*6*96*96): concatenation of N identity images (different) and mask images (same)
-            spectrogram (N_a * 321): spectrogram of whole wav
-            idAudio ((N*7)): matched audio index
-            y (N*3*96*96): ground truth images
-        """
-        sample = self.samples[idx]
-
-        video_path = '{}/{}.mp4'.format(self.data_root, sample)
-        bbx_path = '{}/{}.npy'.format(self.bbx_root, sample)
-        wav_path = '{}/{}.wav'.format(self.audio_root, sample)
-
-        bbxs = np.load(bbx_path)
-
-        imgs = np.array(self.load_video(video_path))
-        volume = len(imgs)
-
-        sampRate, wav = wavfile.read(wav_path)
-        spectrogram = self.fre_audio(wav, sampRate)
-        spectrogram = torch.tensor(spectrogram) # T'* F
-        with torch.no_grad():
-            spectrogram = F.layer_norm(spectrogram, spectrogram.shape[1:])
-
-        pickedimg = list(range(volume))
-        poseImgRaw = np.array(pickedimg)
-        poseImg = self.croppatch(imgs[poseImgRaw], bbxs[poseImgRaw])
-        idImgRaw = np.zeros(volume, dtype=np.int32)
-        idImg = self.croppatch(imgs[idImgRaw], bbxs[idImgRaw])
-
-        poseImg = torch.tensor(poseImg, dtype=torch.float32)  # T*3*96*96
-        idImg = torch.tensor(idImg, dtype=torch.float32)  # T*3*96*96
-
-        spectrogram = self.audio_visual_align(spectrogram, imgs)
-
-        pose_inp = self.prepare_window(poseImg)
-        gt = pose_inp.clone()
-        # mask off the bottom half
-        pose_inp[:, :, pose_inp.shape[2] // 2:] = 0.
-
-        id_inp = self.prepare_window(idImg)
-        inp = torch.cat([pose_inp, id_inp], dim=1)
-
-        pickedimg, bbxs = torch.tensor(pickedimg), torch.tensor(bbxs)
-
-        imgs = torch.from_numpy(imgs)
-
-        return inp, spectrogram, gt, volume, pickedimg, imgs, bbxs, sample
-
-
-def collate_fn(dataBatch):
-    """
-
-    Args:
-        dataBatch:
-
-    Returns:
-        xBatch: input T_sum*6*96*96, concatenation of all video chips in the time dimension
-        yBatch: output T_sum*3*96*96
-        inputLenBatch: bs
-        inputLenRequire: bs
-        audioBatch: bs*T'*321 or T_sum*1*80*16
-        idAudio: (bs*N*7)
-        targetBatch: bs*L*1
-        videoBatch: bs*T''*3*96*96
-        pickedimg: (bs*N*5)
-        videoBatch: bs*T''*3*96*96
-    """
-
-    xBatch = torch.cat([data[0] for data in dataBatch], dim=0)
-    yBatch = torch.cat([data[2] for data in dataBatch], dim=0)
-    inputLenBatch = [data[3] for data in dataBatch]
-
-    audioBatch, padding_mask = collater_audio([data[1] for data in dataBatch], max(inputLenBatch))
-
-    audiolen = audioBatch.shape[2]
-    idAudio = torch.cat([data[4] + audiolen * i for i, data in enumerate(dataBatch)], dim=0)
-
-    pickedimg = [data[4] for data in dataBatch]
-    videoBatch = [data[5] for data in dataBatch]
-    bbxs = [data[6] for data in dataBatch]
-    names = [data[7] for data in dataBatch]
-
-    return xBatch, audioBatch, idAudio, yBatch, padding_mask, pickedimg, videoBatch, bbxs, names
-
-
 def get_gpu_memory_map():
     result = subprocess.check_output(
         [
@@ -319,7 +136,6 @@ def audio_visual_pad(audio_feats, video_feats):
 
     diff = len(audio_feats) - len(video_feats)
     video_feats = video_feats[:diff]
-
     return video_feats, repeat, diff
 
 
@@ -381,9 +197,9 @@ def data_preprocess(args, face_detector):
 
     if repeat > 1:
         imgs = np.repeat(imgs, repeat, axis=0)
-        imgs = imgs[:diff]
         bbxs = np.repeat(bbxs, repeat, axis=0)
-        bbxs = bbxs[:diff]
+    imgs = imgs[:diff]
+    bbxs = bbxs[:diff]
 
     pose_inp = prepare_window(poseImg)
     id_inp = pose_inp.clone()
@@ -417,13 +233,13 @@ def synt_demo(face_detector, device, model, args):
 
     prediction, _ = model(sample, inps, idAudio, spectrogram.shape[0])
 
-    file_size = imgs[0].shape[1]
+    _, height, width, _ = imgs[0].shape[1]
     processed_img = emb_roi2im([idAudio], imgs, bbxs, prediction, device)
 
     out_path = '{}.mp4'.format(args.save_path)
     tmpvideo = '{}.avi'.format(args.save_path)
 
-    out = cv2.VideoWriter(tmpvideo, cv2.VideoWriter_fourcc(*'DIVX'), 25, (file_size, file_size))
+    out = cv2.VideoWriter(tmpvideo, cv2.VideoWriter_fourcc(*'DIVX'), 25, (width, height))
 
     for j, im in enumerate(processed_img[0]):
         im = im.cpu().clone().detach().numpy().astype(np.uint8)

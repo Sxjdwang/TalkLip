@@ -46,6 +46,8 @@ python inf_test.py --filelist $path1 --video_root $path2 --audio_root $path3 \
 - $avhubert_root: path of root of avhubert (should like xxx/av_hubert/avhubert)
 
 ## Demo
+I update the inf_demo.py on 4/April as I previously suppose that the height and width of output videos are the same when I set cv2.VideoWriter().
+
 If you want to reenact the lip movement of a video with a different speech, you can use the following command. 
 ```
 python inf_demo.py --video_path $path8 --wav_path $path9 --ckpt_path $path6 --avhubert_root $avhubert_root

@@ -7,7 +7,7 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 ## Prerequisite 
 
 1. `pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html`
-2. Install [AV-Hubert](https://github.com/facebookresearch/av_hubert)
+2. Install [AV-Hubert](https://github.com/facebookresearch/av_hubert) by following his installation.
 3. Install supplementary packages via `pip install -r requirements.txt`
 5. Install ffmpeg. We adopt version=4.3.2. Please double check wavforms extracted from mp4 files. Extracted wavforms should not contain prefix of 0. If you use anaconda, you can refer to `conda install -c conda-forge ffmpeg==4.2.3`
 6. Download the pre-trained checkpoint of face detector [pre-trained model](https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth) and put it to `face_detection/detection/sfd/s3fd.pth`. Alternative [link](https://iiitaphyd-my.sharepoint.com/:u:/g/personal/prajwal_k_research_iiit_ac_in/EZsy6qWuivtDnANIG73iHjIBjMSoojcIV0NULXV-yiuiIg?e=qTasa8).

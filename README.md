@@ -47,6 +47,7 @@ python inf_test.py --filelist $path1 --video_root $path2 --audio_root $path3 \
 
 ## Demo
 I update the inf_demo.py on 4/April as I previously suppose that the height and width of output videos are the same when I set cv2.VideoWriter().
+Please ensure the sampling rate of the input audio file is 16000 hz.
 
 If you want to reenact the lip movement of a video with a different speech, you can use the following command. 
 ```

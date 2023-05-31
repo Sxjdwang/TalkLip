@@ -33,7 +33,7 @@ python preparation/bbx_extract.py --filelist #path1  --video_root $path2 --bbx_r
 - $path4: a root directory for saving detected bounding boxes
 
 ## Train 
-We are aranging codes and will release them before June
+The code has been recomposed and is functioning smoothly. It will be released within the next 1-2 days.
 
 ## Test 
 The below command is to synthesize videos for quantitative evaluation in our paper.

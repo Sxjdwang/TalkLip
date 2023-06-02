@@ -98,7 +98,7 @@ class TalkLip(nn.Module):
 
         input_dim_size = len(face_sequences.size())
 
-        # input 1*T*321, output 1*T*512
+        # input 1*F*T
         with torch.no_grad() if not self.ft else contextlib.ExitStack():
             enc_out = self.audio_encoder(**sample["net_input"])
         # T*B*C, B*T
@@ -178,12 +178,6 @@ class TalkLip_disc_qual(nn.Module):
     def get_lower_half(self, face_sequences):
         return face_sequences[:, :, face_sequences.size(2) // 2:]
 
-    def to_2d(self, face_sequences):
-        # B*C*T*W*H -> (B*T)*C*W*H
-        B = face_sequences.size(0)
-        face_sequences = torch.cat([face_sequences[:, :, i] for i in range(face_sequences.size(2))], dim=0)
-        return face_sequences
-
     def perceptual_forward(self, false_face_sequences):
         """
         force discriminator output given generated faces as input to 1
@@ -193,7 +187,6 @@ class TalkLip_disc_qual(nn.Module):
         Returns:
 
         """
-        # false_face_sequences = self.to_2d(false_face_sequences)
         false_face_sequences = self.get_lower_half(false_face_sequences)
 
         false_feats = false_face_sequences
@@ -206,7 +199,7 @@ class TalkLip_disc_qual(nn.Module):
         return false_pred_loss
 
     def forward(self, face_sequences):
-        # face_sequences = self.to_2d(face_sequences)
+
         face_sequences = self.get_lower_half(face_sequences)
 
         x = face_sequences

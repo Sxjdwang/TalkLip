@@ -152,15 +152,14 @@ def rgb2gray(g, dim):
     return 0.299 * glist[2] + 0.587 * glist[1] + 0.114 * glist[0]
 
 
-def affine_trans(imgs: list, video_size):
+def affine_trans(imgs, video_size):
     h, w, _ = imgs[0][0].shape
-    start, end = int((h - 96) / 2), int((h + 96) / 2)
     videoSeq = list()
     for i, img in enumerate(imgs):
         new_images = list()
         for j, frame in enumerate(img):
             frame = rgb2gray(frame, 2).squeeze(dim=-1)
-            new_images.append(frame[start: end, start: end])
+            new_images.append(frame)
         new_images = torch.stack(new_images, dim=0)
         videoSeq.append(transform(new_images).unsqueeze(dim=-1))
     collated_videos, padding_mask = collater_audio(videoSeq, video_size)

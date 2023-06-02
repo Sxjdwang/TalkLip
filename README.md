@@ -58,7 +58,7 @@ python train.py --file_dir $file_list_dir --video_root $video_root --audio_root 
 - $log_name: name of log file
 - $cont_w: weight of contrastive learning loss (default: 1e-3)
 - $lip_w: weight of lip reading loss (default: 1e-5)
-- perp_w: weight of perceptual loss (default: 0.07)
+- $perp_w: weight of perceptual loss (default: 0.07)
 
 
 ## Test 

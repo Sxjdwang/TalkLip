@@ -33,9 +33,9 @@ python preparation/bbx_extract.py --filelist $filelist  --video_root $video_root
 - $bbx_root: a root directory for saving detected bounding boxes
 - $gpu: run bbx_extract on a specific gpu. For example, 3.
 
-    If you want to accelerate bbx_extract via multi-thread processing, you can use the following bash script:
-    
-    Please revise variables in the 2-nd to the 9-th lines to make it compatible with your own machine.
+  *If you want to accelerate bbx_extract via multi-thread processing, you can use the following bash script:
+  
+  *Please revise variables in the 2-nd to the 9-th lines to make it compatible with your own machine.
 ```
 sh preprocess.sh
 ```

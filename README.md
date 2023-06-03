@@ -60,6 +60,7 @@ python train.py --file_dir $file_list_dir --video_root $video_root --audio_root 
 - $lip_w: weight of lip reading loss (default: 1e-5)
 - $perp_w: weight of perceptual loss (default: 0.07)
 
+Note: Sometimes, discriminator losses may diverge during training (close to 100). Please stop the training and resume it with a reliable checkpoint.
 
 ## Test 
 The below command is to synthesize videos for quantitative evaluation in our paper.

@@ -6,7 +6,7 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 
 ## Prerequisite 
 
-1. `pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html`
+1. `pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html`.
 2. Install [AV-Hubert](https://github.com/facebookresearch/av_hubert) by following his installation.
 3. Install supplementary packages via `pip install -r requirements.txt`
 5. Install ffmpeg. We adopt version=4.3.2. Please double check wavforms extracted from mp4 files. Extracted wavforms should not contain prefix of 0. If you use anaconda, you can refer to `conda install -c conda-forge ffmpeg==4.2.3`
@@ -28,9 +28,19 @@ python preparation/audio_extract.py --filelist $filelist  --video_root $video_ro
 
 4. To detect bounding boxes in videos and save it:
 ```
-python preparation/bbx_extract.py --filelist $filelist  --video_root $video_root --bbx_root $bbx_root
+python preparation/bbx_extract.py --filelist $filelist  --video_root $video_root --bbx_root $bbx_root --gpu $gpu
 ```
 - $bbx_root: a root directory for saving detected bounding boxes
+- $gpu: run bbx_extract on a specific gpu. For example, 3.
+
+If you want to accelerate bbx_extract via multi-threads, you can use the following bash script:
+```
+sh preprocess.sh
+```
+Please revise variables in the 2-nd to the 9-th lines to make it compatible with your own machine.
+
+- $file_list_dir: a directory which contains train.txt, valid.txt, test.txt of LRS2 dataset
+- $num_thread: number of threads you used. Please do not let it cross 8 with a 24GB GPU, 4 with a 12GB gpu.
 
 
 Checkpoints
@@ -58,9 +68,10 @@ python train.py --file_dir $file_list_dir --video_root $video_root --audio_root 
 - $log_name: name of log file
 - $cont_w: weight of contrastive learning loss (default: 1e-3)
 - $lip_w: weight of lip reading loss (default: 1e-5)
-- $perp_w: weight of perceptual loss (default: 0.07)
+- perp_w: weight of perceptual loss (default: 0.07)
 
 Note: Sometimes, discriminator losses may diverge during training (close to 100). Please stop the training and resume it with a reliable checkpoint.
+
 
 ## Test 
 The below command is to synthesize videos for quantitative evaluation in our paper.

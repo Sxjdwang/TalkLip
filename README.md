@@ -60,6 +60,7 @@ Checkpoints
 python train.py --file_dir $file_list_dir --video_root $video_root --audio_root $audio_root \
 --bbx_root $bbx_root --word_root $word_root --avhubert_root $avhubert_root --avhubert_path $avhubert_path \
 --checkpoint_dir $checkpoint_dir --log_name $log_name --cont_w $cont_w --lip_w $lip_w --perp_w $perp_w \
+--gen_checkpoint_path $gen_checkpoint_path --disc_checkpoint_path $disc_checkpoint_path
 ```
 - $file_list_dir: a directory which contains train.txt, valid.txt, test.txt of LRS2 dataset
 - $word_root: root directory of text annotation. Normally, it should be equal to $video_root, as LRS2 dataset puts a video file ".mp4" and its corresponding text file ".txt" in the same directory.
@@ -69,7 +70,9 @@ python train.py --file_dir $file_list_dir --video_root $video_root --audio_root 
 - $log_name: name of log file
 - $cont_w: weight of contrastive learning loss (default: 1e-3)
 - $lip_w: weight of lip reading loss (default: 1e-5)
-- perp_w: weight of perceptual loss (default: 0.07)
+- $perp_w: weight of perceptual loss (default: 0.07)
+- $gen_checkpoint_path(optional): enter the path of a generator checkpoint if you want to resume training from a checkpoint
+- $disc_checkpoint_path(optional): enter the path of a discriminator checkpoint if you want to resume training from a checkpoint
 
 Note: Sometimes, discriminator losses may diverge during training (close to 100). Please stop the training and resume it with a reliable checkpoint.
 

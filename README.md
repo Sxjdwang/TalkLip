@@ -81,7 +81,7 @@ python inf_test.py --filelist $filelist --video_root $video_root --audio_root $a
 --bbx_root $bbx_root --save_root $syn_video_root --ckpt_path $talklip_ckpt --avhubert_root $avhubert_root
 ```
 - $syn_video_root: root directory for saving synthesized videos
-- $talklip_ckpt: a pre-trained checkpoint of TalkLip net
+- $talklip_ckpt: a trained checkpoint of TalkLip net
 
 
 ## Demo

@@ -98,6 +98,8 @@ python inf_demo.py --video_path $video_file --wav_path $audio_file --ckpt_path $
 - $video_file: a video file (end with .mp4)
 - $audio_file: a audio file (end with .wav)
 
+**Please ensure that the input audio only has one channel
+
 ## Evaluation
 
 Please follow README.md in the evaluation directory

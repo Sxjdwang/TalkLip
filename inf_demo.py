@@ -234,7 +234,7 @@ def synt_demo(face_detector, device, model, args):
     prediction, _ = model(sample, inps, idAudio, spectrogram.shape[0])
 
     _, height, width, _ = imgs[0].shape
-    processed_img = emb_roi2im([idAudio], imgs, bbxs, prediction, device)
+    processed_img = emb_roi2im([idAudio], imgs, bbxs, prediction.cpu(), 'cpu')
 
     out_path = '{}.mp4'.format(args.save_path)
     tmpvideo = '{}.avi'.format(args.save_path)

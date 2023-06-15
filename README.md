@@ -56,6 +56,16 @@ Checkpoints
 
 
 ## Train 
+Some AV-Hubert files need to be modified.
+```
+rm xxx/av_hubert/avhubert/hubert_asr.py
+cp avhubert_modification/hubert_asr_wav2lip.py xxx/av_hubert/avhubert/hubert_asr.py
+
+rm xxx/av_hubert/fairseq/fairseq/criterions/label_smoothed_cross_entropy.py
+cp avhubert_modification/label_smoothed_cross_entropy_wav2lip.py xxx/av_hubert/fairseq/fairseq/criterions/label_smoothed_cross_entropy.py
+```
+
+You can train with the following command.
 ```
 python train.py --file_dir $file_list_dir --video_root $video_root --audio_root $audio_root \
 --bbx_root $bbx_root --word_root $word_root --avhubert_root $avhubert_root --avhubert_path $avhubert_path \

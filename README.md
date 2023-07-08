@@ -2,7 +2,9 @@
 
 This repo is the official implementation of 'Seeing What You Said: Talking Face Generation Guided by a Lip Reading Expert', CVPR 2023.
 
-[Paper](http://arxiv.org/abs/2303.17480)
+[Arxiv](http://arxiv.org/abs/2303.17480) / [Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Wang_Seeing_What_You_Said_Talking_Face_Generation_Guided_by_a_CVPR_2023_paper.pdf)
+# 🔥 News
+We upload a Talking_face_demo.pptx which containing some demo videos.
 
 ## Prerequisite 
 
@@ -106,7 +108,7 @@ If you want to reenact the lip movement of a video with a different speech, you 
 python inf_demo.py --video_path $video_file --wav_path $audio_file --ckpt_path $talklip_ckpt --avhubert_root $avhubert_root
 ```
 - $video_file: a video file (end with .mp4)
-- $audio_file: a audio file (end with .wav)
+- $audio_file: an audio file (end with .wav)
 
 **Please ensure that the input audio only has one channel
 
@@ -114,4 +116,14 @@ python inf_demo.py --video_path $video_file --wav_path $audio_file --ckpt_path $
 
 Please follow README.md in the evaluation directory
 
+## Citation
 
+```
+@inproceedings{wang2023seeing,
+  title={Seeing What You Said: Talking Face Generation Guided by a Lip Reading Expert},
+  author={Wang, Jiadong and Qian, Xinyuan and Zhang, Malu and Tan, Robby T and Li, Haizhou},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={14653--14662},
+  year={2023}
+}
+```

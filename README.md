@@ -4,7 +4,7 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 
 [Arxiv](http://arxiv.org/abs/2303.17480) / [Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Wang_Seeing_What_You_Said_Talking_Face_Generation_Guided_by_a_CVPR_2023_paper.pdf)
 # 🔥 News
-We upload a Talking_face_demo.pptx which containing some demo videos.
+We upload a Talking_face_demo.pptx to this repository which contains some demo videos.
 
 ## Prerequisite 
 

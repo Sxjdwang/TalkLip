@@ -76,7 +76,7 @@ python train.py --file_dir $file_list_dir --video_root $video_root --audio_root 
 ```
 - $file_list_dir: a directory which contains train.txt, valid.txt, test.txt of LRS2 dataset
 - $word_root: root directory of text annotation. Normally, it should be equal to $video_root, as LRS2 dataset puts a video file ".mp4" and its corresponding text file ".txt" in the same directory.
-- $avhubert_root: path of root of avhubert (should like xxx/av_hubert/avhubert)
+- $avhubert_root: path of root of avhubert (should like xxx/av_hubert)
 - $avhubert_path: download the above Lip reading expert and enter its path
 - $checkpoint_dir: a directory to save checkpoint of talklip
 - $log_name: name of log file

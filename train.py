@@ -204,8 +204,8 @@ class Talklipdata(object):
     def audio_visual_align(self, audio_feats, video_feats):
         diff = len(audio_feats) - len(video_feats)
         if diff < 0:
-            audio_feats = np.concatenate(
-                [audio_feats, np.zeros([-diff, audio_feats.shape[-1]], dtype=audio_feats.dtype)])
+            audio_feats = torch.cat(
+                [audio_feats, torch.zeros([-diff, audio_feats.shape[-1]], dtype=audio_feats.dtype)])
         elif diff > 0:
             audio_feats = audio_feats[:-diff]
         return audio_feats

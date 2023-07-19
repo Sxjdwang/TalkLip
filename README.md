@@ -4,7 +4,8 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 
 [Arxiv](http://arxiv.org/abs/2303.17480) | [Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Wang_Seeing_What_You_Said_Talking_Face_Generation_Guided_by_a_CVPR_2023_paper.pdf)
 # 🔥 News
-We upload a Talking_face_demo.pptx to this repository which contains some demo videos.
+1. We upload a Talking_face_demo.pptx to this repository which contains some demo videos.
+2. Fix the GPU out-of-memory error in train.py. Running train.py with a batch_size of 8 requires approximately 24GB of memory. However, in some rare cases, it might need more than 24GB and trigger an error. We have resolved this issue using a try-and-catch mechanism. --  19/July/2023
 
 ## Prerequisite 
 

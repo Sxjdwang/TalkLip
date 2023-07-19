@@ -449,6 +449,7 @@ def train(device, model, avhubert, criterion, data_loader, optimizer, args, glob
     for epoch in range(args.n_epoch):
         losses = {'lip': 0, 'local_sync': 0, 'l1': 0, 'prec_g': 0, 'disc_real_g': 0, 'disc_fake_g': 0}
         prog_bar = tqdm(enumerate(data_loader['train']))
+        oom_count = 0
         for step, (inpim, spectrogram, audio_idx, gtim, ((trgt, prev_trg), tlen, ntoken), padding_mask, vidx, videos, bbxs) in prog_bar:
             for key in model.keys():
                 model[key].train()
@@ -464,56 +465,68 @@ def train(device, model, avhubert, criterion, data_loader, optimizer, args, glob
 
             net_input = {'source': {'audio': spectrogram, 'video': None}, 'padding_mask': padding_mask, 'prev_output_tokens': prev_trg}
             sample = {'net_input': net_input, 'target_lengths': tlen, 'ntokens': ntoken, 'target': trgt}
-            syntim, enc_audio = model['gen'](sample, inpim, audio_idx, spectrogram.shape[0])              # g: T*3*96*96
 
-            if lip_train:
-                processed_img = images2avhubert(vidx, videos, bbxs, syntim, spectrogram.shape[2], device)
-                sample['net_input']['source']['video'] = processed_img
-                sample['net_input']['source']['audio'] = None
-                lip_loss, sample_size, logs, enc_out = criterion(avhubert, sample)
-                losses['lip'] += lip_loss.item()
-                if args.cont_w > 0:
-                    pickedVid, pickedAud = local_sync_loss(audio_idx, enc_audio, enc_out['encoder_out'])
-                    local_sync = model['gen'].sync_net(pickedVid, pickedAud)
-                    losses['local_sync'] += local_sync.item()
+            try:
+                syntim, enc_audio = model['gen'](sample, inpim, audio_idx, spectrogram.shape[0])              # g: T*3*96*96
+
+                if lip_train:
+                    processed_img = images2avhubert(vidx, videos, bbxs, syntim, spectrogram.shape[2], device)
+                    sample['net_input']['source']['video'] = processed_img
+                    sample['net_input']['source']['audio'] = None
+                    lip_loss, sample_size, logs, enc_out = criterion(avhubert, sample)
+                    losses['lip'] += lip_loss.item()
+                    if args.cont_w > 0:
+                        pickedVid, pickedAud = local_sync_loss(audio_idx, enc_audio, enc_out['encoder_out'])
+                        local_sync = model['gen'].sync_net(pickedVid, pickedAud)
+                        losses['local_sync'] += local_sync.item()
+                    else:
+                        local_sync = 0.
                 else:
-                    local_sync = 0.
-            else:
-                lip_loss, local_sync = 0., 0.
+                    lip_loss, local_sync = 0., 0.
 
-            if args.perp_w > 0.:
-                perceptual_loss = model['disc'].perceptual_forward(syntim)
-                losses['prec_g'] += perceptual_loss.item()
-            else:
-                perceptual_loss = 0.
+                if args.perp_w > 0.:
+                    perceptual_loss = model['disc'].perceptual_forward(syntim)
+                    losses['prec_g'] += perceptual_loss.item()
+                else:
+                    perceptual_loss = 0.
 
-            l1loss = recon_loss(syntim, gtim)
-            losses['l1'] += l1loss.item()
+                l1loss = recon_loss(syntim, gtim)
+                losses['l1'] += l1loss.item()
 
-            loss = args.lip_w * lip_loss + args.perp_w * perceptual_loss + (1. - args.lip_w - args.perp_w) * l1loss + args.cont_w * local_sync
+                loss = args.lip_w * lip_loss + args.perp_w * perceptual_loss + (1. - args.lip_w - args.perp_w) * l1loss + args.cont_w * local_sync
 
-            loss.backward()
-            optimizer['gen'].step()
+                loss.backward()
+                optimizer['gen'].step()
 
-            ### Remove all gradients before Training disc
-            optimizer['gen'].zero_grad()
+                ### Remove all gradients before Training disc
+                optimizer['gen'].zero_grad()
 
-            pred = model['disc'](gtim)
-            disc_real_loss = F.binary_cross_entropy(pred, torch.ones((len(pred), 1)).to(device))
-            losses['disc_real_g'] += disc_real_loss.item()
+                pred = model['disc'](gtim)
+                disc_real_loss = F.binary_cross_entropy(pred, torch.ones((len(pred), 1)).to(device))
+                losses['disc_real_g'] += disc_real_loss.item()
 
-            pred = model['disc'](syntim.detach())
-            disc_fake_loss = F.binary_cross_entropy(pred, torch.zeros((len(pred), 1)).to(device))
-            losses['disc_fake_g'] += disc_fake_loss.item()
+                pred = model['disc'](syntim.detach())
+                disc_fake_loss = F.binary_cross_entropy(pred, torch.zeros((len(pred), 1)).to(device))
+                losses['disc_fake_g'] += disc_fake_loss.item()
 
-            disc_loss = disc_real_loss + disc_fake_loss
-            disc_loss.backward()
+                disc_loss = disc_real_loss + disc_fake_loss
+                disc_loss.backward()
 
-            # torch.nn.utils.clip_grad_norm_(model.parameters(), 5.)
-            optimizer['disc'].step()
+                # torch.nn.utils.clip_grad_norm_(model.parameters(), 5.)
+                optimizer['disc'].step()
 
-            if global_step % args.ckpt_interval == 0:
-                save_sample_images(inpim, syntim, gtim, global_step, args.checkpoint_dir)
+                if global_step % args.ckpt_interval == 0:
+                    save_sample_images(inpim, syntim, gtim, global_step, args.checkpoint_dir)
+            except RuntimeError as e:
+                inpim, gtim, trgt, prev_trg, spectrogram, padding_mask, net_input, sample = 0, 0, 0, 0, 0, 0, 0, 0
+                syntim, enc_audio, processed_img, enc_out, pickedVid, pickedAud = 0, 0, 0, 0, 0, 0
+                perceptual_loss, l1loss, loss, disc_real_loss, disc_fake_loss, disc_loss, lip_loss, local_sync = 0, 0, 0, 0, 0, 0, 0, 0
+                torch.cuda.empty_cache()
+                if "out of memory" in str(e):
+                    print("CUDA out of memory error. Try reducing batch size or model size.")
+                    oom_count += 1
+                else:
+                    raise e
 
             global_step += 1
 
@@ -554,6 +567,7 @@ def train(device, model, avhubert, criterion, data_loader, optimizer, args, glob
                         sys.exit()
 
             prog_bar.set_description(train_log)
+        logger.info('There are {} cases of out of memory in one epoch'.format(oom_count))
 
 
 
@@ -739,4 +753,3 @@ if __name__ == "__main__":
 
     train(device, {'gen': imGen, 'disc': imDisc}, avhubert, criterion, {'train': train_data_loader, 'test': test_data_loader},
           {'gen': optimizer, 'disc': disc_optimizer}, args, global_step, logger)
-

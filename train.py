@@ -311,9 +311,6 @@ class Talklipdata(object):
 
         trgt = self.readtext(word_path)
 
-        with torch.no_grad():
-            spectrogram = F.layer_norm(spectrogram, spectrogram.shape[1:])
-
         spectrogram = self.audio_visual_align(spectrogram, imgs)
 
         poseImg = self.im_preprocess(poseImg)

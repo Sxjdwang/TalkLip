@@ -518,7 +518,7 @@ def train(device, model, avhubert, criterion, data_loader, optimizer, args, glob
                 inpim, gtim, trgt, prev_trg, spectrogram, padding_mask, net_input, sample = 0, 0, 0, 0, 0, 0, 0, 0
                 syntim, enc_audio, processed_img, enc_out, pickedVid, pickedAud = 0, 0, 0, 0, 0, 0
                 perceptual_loss, l1loss, loss, disc_real_loss, disc_fake_loss, disc_loss, lip_loss, local_sync = 0, 0, 0, 0, 0, 0, 0, 0
-                torch.cuda.empty_cache()
+                # torch.cuda.empty_cache()
                 if "out of memory" in str(e):
                     print("CUDA out of memory error. Try reducing batch size or model size.")
                     oom_count += 1

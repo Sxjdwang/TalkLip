@@ -57,7 +57,7 @@ Checkpoints
 | Lip reading observer 1 | AV-hubert (large) fine-tuned on LRS2 | [Link](https://drive.google.com/file/d/1wOsiXKLOeScrU6XuzebYA6Y-9ncd8-le/view?usp=share_link) |
 | Lip reading observer 2 | Conformer lip-reading network | [Link](https://drive.google.com/file/d/16tpyaXLLTYUnIBT_YEWQ5ui6xUkBGcpM/view?usp=share_link) |
 | Lip reading expert | lip-reading network for training of talking face generation | [Link](https://drive.google.com/file/d/1XAVhWXjd77UHsfna9O8cASHr3iGiQBQU/view?usp=share_link) |
-| Discriminator | Discriminator of GAN | [Link](https://drive.google.com/file/d/1XAVhWXjd77UHsfna9O8cASHr3iGiQBQU/view?usp=share_link) |
+| Discriminator | Discriminator of GAN | [Link](https://drive.google.com/file/d/17-3fqKCrHzkzyPnHJ_9_MuJ4zCkK5EU-/view?usp=sharing) |
 
 ## Train 
 Some AV-Hubert files need to be modified.

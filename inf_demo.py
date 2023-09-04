@@ -135,6 +135,8 @@ def audio_visual_pad(audio_feats, video_feats):
         video_feats = torch.repeat_interleave(video_feats, repeat, dim=0)
 
     diff = len(audio_feats) - len(video_feats)
+    if diff == 0:
+        diff = len(video_feats)
     video_feats = video_feats[:diff]
     return video_feats, repeat, diff
 

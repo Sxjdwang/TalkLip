@@ -2,7 +2,7 @@
 
 # Evaluating all metrics on LRS2 via one bash script
 
-Before using this script, please read the below instruction of each metric first, as there are some preparations need to be done.
+Before using this script, please read the instructions for each metric below, as there are some preparations that need to be done.
 ```
 sh eval_lrs2.sh $synt_root $filelist $syncnet_python_root $orig_root $bbx_root $ckpt_path_conformer $data_root $avhubert_root \
 $ckpt_path_av_hubert $gpu
@@ -47,15 +47,14 @@ cp SyncNetInstance_calc_scores.py $syncnet_python_root
 
 4. evaluate synthesized videos
 ```
-python sync_eval.py --data_root $path5 --filelist $path1 --sync_root $syncnet_python_root
+python sync_eval.py --data_root $synt_root --filelist $filelist --sync_root $syncnet_python_root
 ```
-- path5 is the path of the syncnet_python 
 
 ## AV-Hubert WER evaluation 
 
 1. Compose a filelist file compatible with AV-Hubert:
 ```
-python toavhform.py --video_root $path5 --audio_root $path10
+python toavhform.py --video_root $synt_root --audio_root $path10
 ```
 - $path10: you can put any path since audio is not evolved in lip-reading evaluation
 
@@ -64,11 +63,10 @@ python toavhform.py --video_root $path5 --audio_root $path10
 3. Evaluate Word Error Rate 
 ```
 cd $avhubert_root
-python infer_s2s.py --config-dir ./conf/ --config-name s2s_decode.yaml dataset.gen_subset=test common_eval.path=$path11 \
+python infer_s2s.py --config-dir ./conf/ --config-name s2s_decode.yaml dataset.gen_subset=test common_eval.path=$ckpt_path_av_hubert \
 common_eval.results_path=decode/s2s/ override.modalities=['video'] \
 common.user_dir=$avhubert_root +override.data=$TalkLip_root/datalist +override.label_dir=$TalkLip_root/datalist
 ```
-$path11: where you save large_ft_lrs2.pt
 
 ## Conformer WER evaluation
 
@@ -76,11 +74,9 @@ $path11: where you save large_ft_lrs2.pt
 
 2. Evaluate Word Error Rate 
 ```
-python teacher_force_wer.py --data_root $path12 --video_root $path5 \
---ckpt_path $path13
+python teacher_force_wer.py --data_root $data_root --video_root $synt_root \
+--ckpt_path $ckpt_path_conformer
 ```
-- $path12: a directory contain $path1 and $path2
-- $path13: where you save conformer.pt
 
 ## Accuracy evaluation on LRW
 

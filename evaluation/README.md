@@ -1,10 +1,28 @@
 # Evaluateion of PSNR, SSIM, LSE-C, LSE-D, ACC, WER1, WER2.
 
+# Evaluating all metrics on LRS2 via one bash script
+
+Before using this script, please read the below instruction of each metric first, as there are some preparations need to be done.
+```
+sh eval_lrs2.sh $synt_root $filelist $syncnet_python_root $orig_root $bbx_root $ckpt_path_conformer $data_root $avhubert_root \
+$ckpt_path_av_hubert $gpu
+```
+- synt_root: the directory containing synthesized videos, which is the $syn_video_root when you run inf_test.py. 
+- filelist: refers to $filelist when you run inf_test.py, e.g. xxx/mvlrs_v1/test.txt.
+- syncnet_python_root: the root of syncnet_python
+- orig_root: the root of original data, e.g. xxx/mvlrs_v1/main.
+- bbx_root: refers to $bbx_root in 'Dataset and pre-processing'
+- ckpt_path_conformer: the path where you save 'Lip reading observer 2'
+- data_root: a directory containing $orig_root and $filelist, e.g. xxx/mvlrs_v1.
+- avhubert_root: the root of AV-hubert, e.g. xxx/av_hubert/avhubert.
+- ckpt_path_av_hubert: the path where you save 'Lip reading observer 1'
+- gpu: the index of gpu to conduct evaluation.
+
 ## Visual quality
 
 In our paper, we adopt metrics of PSNR and SSIM. You can get these results by the following commands:
 ```
-python visual_quality.py --orig_root $path2 --synt_root $path5 --bbx_root $path4 --filelist $path1
+python visual_quality.py --orig_root $orig_root --synt_root $synt_root --bbx_root $bbx_root --filelist $filelist
 ```
 
 ## lip-speech synchronization
@@ -68,7 +86,7 @@ python teacher_force_wer.py --data_root $path12 --video_root $path5 \
 
 We adopt [Multi-head Visual-audio Memory](https://github.com/ms-dot-k/Multi-head-Visual-Audio-Memory) to evaluate classification accuracy of synthesized videos on LRW.
 
-As their environment is different with ours, we recommend to create a separable environment following their requirement.
+As their environment is different with ours, we recommend to create a separable environment following their requirement [Multi-head Visual-audio Memory](https://github.com/ms-dot-k/Multi-head-Visual-Audio-Memory).
 
 Afterwards, you can evaluate synthesized videos by the following commands.
 

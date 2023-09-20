@@ -7,6 +7,7 @@ This repo is the official implementation of 'Seeing What You Said: Talking Face 
 1. We upload a Talking_face_demo.pptx to this repository which contains some demo videos.
 2. Fix the GPU out-of-memory error in train.py. Running train.py with a batch_size of 8 requires approximately 24GB of memory. However, in some rare cases, it might need more than 24GB and trigger an error. We have resolved this issue using a try-and-catch mechanism. --  19/July/2023
 3. We upload a checkpoint of the discriminator as requested in the issue.
+4. We upload an eval_lrs.sh in the evaluation folder, which allows you to evaluate all metrics on LRS2 with a single command.
 
 ## Prerequisite 
 
@@ -97,6 +98,7 @@ The below command is to synthesize videos for quantitative evaluation in our pap
 python inf_test.py --filelist $filelist --video_root $video_root --audio_root $audio_root \
 --bbx_root $bbx_root --save_root $syn_video_root --ckpt_path $talklip_ckpt --avhubert_root $avhubert_root
 ```
+- $filelist: a txt file containing names of all test files, e.g. xxx/mvlrs_v1/test.txt.
 - $syn_video_root: root directory for saving synthesized videos
 - $talklip_ckpt: a trained checkpoint of TalkLip net
 

@@ -281,7 +281,7 @@ class Talklipdata(object):
             spectrogram = F.layer_norm(spectrogram, spectrogram.shape[1:])
 
         if self.train:
-            pid_start = random.sample(list(range(1, volume-4)), int(volume * self.prob))
+            pid_start = random.sample(list(range(1, volume-4)), max(int(volume * self.prob), 1))
         else:
             pid_start = list(range(0, volume-4, int(volume * 0.12)))
 

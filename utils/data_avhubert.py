@@ -168,14 +168,14 @@ def affine_trans(imgs, video_size):
 
 def emb_roi2im(pickedimg, imgs, bbxs, pre, device):
     trackid = 0
-    width = imgs[0][0].shape[1]
+    height, width, _ = imgs[0][0].shape
     for i in range(len(pickedimg)):
         idimg = pickedimg[i]
         imgs[i] = imgs[i].float().to(device)
         for j in range(len(idimg)):
             bbx = bbxs[i][idimg[j]]
             if bbx[2] > width: bbx[2] = width
-            if bbx[3] > width: bbx[3] = width
+            if bbx[3] > height: bbx[3] = height
             resize2ori = transforms.Resize([bbx[3] - bbx[1], bbx[2] - bbx[0]])
             try:
                 resized = resize2ori(pre[trackid + j] * 255.).permute(1, 2, 0)
@@ -185,8 +185,6 @@ def emb_roi2im(pickedimg, imgs, bbxs, pre, device):
                 import sys
                 sys.exit()
         trackid += len(idimg)
-
-    return imgs
 
 
 def images2avhubert(pickedimg, imgs, bbxs, pre, video_size, device):

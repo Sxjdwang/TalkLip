@@ -185,6 +185,7 @@ def emb_roi2im(pickedimg, imgs, bbxs, pre, device):
                 import sys
                 sys.exit()
         trackid += len(idimg)
+    return imgs
 
 
 def images2avhubert(pickedimg, imgs, bbxs, pre, video_size, device):
